@@ -1,6 +1,8 @@
 import os
 import sys
+import time
 import subprocess
+
 
 print("Ccurl (Continuous Curl)")
 if len(sys.argv) <= 1:
@@ -10,6 +12,11 @@ if len(sys.argv) <= 1:
 
 url = sys.argv[1]
 times = int(sys.argv[2])
+if len(sys.argv) > 3:
+    delay_seconds = int(sys.argv[3])
+    print("Delay between requests: {} seconds".format(delay_seconds))
+else:
+    delay_seconds = 0
 
 # format of command without python string interpolation making it weird
 # curl -k url.com --write-out %{http_code} --silent --output /dev/null
@@ -32,6 +39,7 @@ for idx in range(times):
             idx,
             status_code,
             response_codes))
+        time.sleep(delay_seconds)
     except KeyboardInterrupt:
         sys.exit(1)
         break
