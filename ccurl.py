@@ -41,9 +41,9 @@ for idx in range(times):
         status_code = int(subprocess.check_output(cmd, shell=True))
 
         if not status_code in response_codes:
-            response_codes[str(status_code)] = 1
+            response_codes[status_code] = 1
         else:
-            response_codes[str(status_code)] += 1
+            response_codes[status_code] += 1
         if status_code >= 300 and status_code <= 499:
             color = colors.YELLOW
         elif status_code >= 500 and status_code <= 599:
