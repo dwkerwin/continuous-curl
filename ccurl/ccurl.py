@@ -42,7 +42,7 @@ def ccurl(
     ok_count = 0
     total_count = 0
     response_codes = {}
-    for idx in range(repeat_times):
+    for idx in range(int(repeat_times)):
         try:
             status_code = int(subprocess.check_output(cmd, shell=True))
 
@@ -58,12 +58,13 @@ def ccurl(
                 color = colors.ENDCOLOR
 
             if not display_name:
-                display_name = url[0:20]
+                display_name = "{}{}".format(
+                    url[0:20],
+                    '...' if len(url) > 20 else '')
 
-            print("{}{}{} (try {}) Status: {}, Accum: {}".format(
+            print("{}{} (try {}) Status: {}, Accum: {}".format(
                 color,
                 display_name,
-                '...' if len(url) > 20 else '',
                 idx,
                 status_code,
                 response_codes))
@@ -74,7 +75,12 @@ def ccurl(
 
 
 def main():
-    print('Continuous Curl')
+    here = os.path.abspath(os.path.dirname(__file__))
+    about = {}
+    with open(os.path.join(here, 'version.py'), 'r') as f:
+        exec(f.read(), about)
+
+    print('Continuous Curl version {}'.format(about['__version__']))
 
     args = parse_args()
     ccurl(
