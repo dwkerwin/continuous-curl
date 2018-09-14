@@ -23,11 +23,17 @@ def parse_args():
                         help='The number of times to repeat the request')
     parser.add_argument('--delay', dest='delay_seconds', default=1,
                         help='The number of seconds to delay between requests')
+    parser.add_argument('--name', dest='display_name', required=False,
+                        help='An optional label to display rather than the first characters of the URL')
     args = parser.parse_args()
     return args
 
 
-def ccurl(url, repeat_times, delay_seconds):
+def ccurl(
+    url,
+    repeat_times,
+    delay_seconds,
+    display_name):
     # format of command without python string interpolation making it weird
     # curl -k url.com --write-out %{http_code} --silent --output /dev/null
     cmd = "curl -k {} --write-out %{{http_code}} --silent --output /dev/null".format(url)
@@ -51,9 +57,12 @@ def ccurl(url, repeat_times, delay_seconds):
             else:
                 color = colors.ENDCOLOR
 
+            if not display_name:
+                display_name = url[0:20]
+
             print("{}{}{} (try {}) Status: {}, Accum: {}".format(
                 color,
-                url[0:20],
+                display_name,
                 '...' if len(url) > 20 else '',
                 idx,
                 status_code,
@@ -68,7 +77,11 @@ def main():
     print('Continuous Curl')
 
     args = parse_args()
-    ccurl(args.url, args.repeat_times, args.delay_seconds)
+    ccurl(
+        args.url,
+        args.repeat_times,
+        args.delay_seconds,
+        args.display_name)
 
 
 if __name__ == '__main__':
