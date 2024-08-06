@@ -44,7 +44,11 @@ def ccurl(
     response_codes = {}
     for idx in range(int(repeat_times)):
         try:
+            start_time = time.time()
             status_code = int(subprocess.check_output(cmd, shell=True))
+            end_time = time.time()
+
+            duration_ms = (end_time - start_time) * 1000  # Convert to milliseconds
 
             if not status_code in response_codes:
                 response_codes[status_code] = 1
@@ -62,11 +66,12 @@ def ccurl(
                     url[0:20],
                     '...' if len(url) > 20 else '')
 
-            print("{}{} (try {}) Status: {}, Accum: {}".format(
+            print("{}{} (try {}) Status: {}, Time: {:.2f} ms, Accum: {}".format(
                 color,
                 display_name,
                 idx,
                 status_code,
+                duration_ms,
                 response_codes))
             time.sleep(int(delay_seconds))
         except KeyboardInterrupt:
